@@ -52,6 +52,7 @@ int main(int argc, char* argv[]) {
         MPI_Send(message, strlen(message)+1, MPI_CHAR, 
             dest, tag, MPI_COMM_WORLD);
     } else { /* my_rank == 0 */
+        printf("Greetings from process 0!\n");
         for (source = 1; source < p; source++) {
             MPI_Recv(message, 100, MPI_CHAR, source, tag, 
                 MPI_COMM_WORLD, &status);
