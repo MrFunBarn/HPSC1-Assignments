@@ -26,8 +26,16 @@ int main(int argc, char* argv[])
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
     MPI_Comm_size( MPI_COMM_WORLD, &p );
 
-    /* Setup the ring of process comunication using modulo arithimatic */
-    if ( my_rank == 0 )
+     /* Setup the ring of process comunication using modulo arithimatic. First
+     * check to see if p is alone in the universe and if so, just print a
+     * meassage as there's no need to invoke MPI. If not, start a message
+     * passing ring with process 0. p0 will send and then recive a message, all
+     * other p's recive and the send. */
+    if ( p == 1)
+    {
+        printf("Greetings from Process 0")
+    }
+    else if ( my_rank == 0 )
     {
         sprintf( message, "Greetings from process 0" )
     }
