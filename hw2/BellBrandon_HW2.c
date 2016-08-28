@@ -1,7 +1,7 @@
 /* 
  * Brandon Bell
  * csci4576
- * hw2 8-24-2016
+ * hw2 8-31-2016
  *
  * Part 1: Ring Hello World program.
 */
@@ -30,16 +30,37 @@ int main(int argc, char* argv[])
      * check to see if p is alone in the universe and if so, just print a
      * meassage as there's no need to invoke MPI. If not, start a message
      * passing ring with process 0. p0 will send and then recive a message, all
-     * other p's recive and the send. */
-    if ( p == 1)
+     * other p's recive and then send. */
+    if ( p == 1 )
     {
-        printf("Greetings from Process 0")
+        printf ("Greetings from process 0" )
     }
     else if ( my_rank == 0 )
     {
         sprintf( message, "Greetings from process 0" )
-    }
+        dest   = 1;
+        source = p - 1;
 
+        // Send message to p1 and then listen and print message from process p.
+        MPI_Send( message, strlen(message)+1, MPI_CHAR, dest, tag, MPI_COMM_WORLD );
+        MPI_Recv( message, 100, MPI_CHAR, source, tag, MPI_COMM_WORLD, &status );
+        printf("%s\n", message);
+    }
+    else 
+    {
+        /* dest of new message and source incoming message. The modulo p in
+        * dest ensures that if p is last process, it sends it's message to p0. */
+        dest   = (my_rank + 1) % p;
+        source = my_rank - 1;
+
+        // Receve Message from previous process and print it.
+        MPI_Recv( message, 100, MPI_CHAR, source, tag, MPI_COMM_WORLD, &status );
+        printf("%s\n", message);
+
+        // Craft and send a new message to the next process.
+        sprintf( message, "Greetings from process %d", &my_rank )
+        MPI_Send( message, strlen(message)+1, MPI_CHAR, dest, tag, MPI_COMM_WORLD );
+    }
     // Close-up shop.
     MPI_Finalize();
 }
