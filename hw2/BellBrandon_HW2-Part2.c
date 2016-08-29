@@ -38,7 +38,7 @@
 #include "mpi.h"
 
 
-main(int argc, char** argv) {
+int main(int argc, char** argv) {
     int         my_rank;   /* My process rank           */
     int         p;         /* The number of processes   */
     float       a = 0.0;   /* Left endpoint             */
@@ -52,7 +52,8 @@ main(int argc, char** argv) {
     float       integral;  /* Integral over my interval */
     float       total;     /* Total integral            */
     int         source;    /* Process sending integral  */
-    int         dest = 0;  /* All messages go to 0      */
+    //int         dest = 0;  /* All messages go to 0      */
+    int         dest;  /* All messages go to 0      */
     int         tag = 0;
     MPI_Status  status;
 
@@ -78,17 +79,28 @@ main(int argc, char** argv) {
     local_b = local_a + local_n*h;
     integral = Trap(local_a, local_b, local_n, h);
 
-    /* Add up the integrals calculated by each process */
+    /* Sum the individual trapazoids with a linear reduce. Each p sends it's
+     * total to p-1 and p0 prints the results. */
+    // p0 only receives from p1.
     if (my_rank == 0) {
-        total = integral;
-        for (source = 1; source < p; source++) {
-            MPI_Recv(&integral, 1, MPI_FLOAT, source, tag,
-                MPI_COMM_WORLD, &status);
-            total = total + integral;
-        }
-    } else {  
-        MPI_Send(&integral, 1, MPI_FLOAT, dest,
-            tag, MPI_COMM_WORLD);
+        source = 1;
+        MPI_Recv( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status );
+        total = total + integral;
+    }
+    // process p only sends to the next process.
+    else if ( my_rank == ( p - 1 ) )
+    {
+        dest =  my_rank - 1;
+        MPI_Send( &integral, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
+    }
+    // everybody else in between p and p0.
+    else 
+    {  
+        source = my_rank + 1;
+        dest   = my_rank - 1;
+        MPI_Recv( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status );
+        total = total + integral;
+        MPI_Send( &total, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
     }
 
     /* Print the result */
