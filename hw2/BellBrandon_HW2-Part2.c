@@ -79,10 +79,15 @@ int main(int argc, char** argv) {
     local_b = local_a + local_n*h;
     integral = Trap(local_a, local_b, local_n, h);
 
-    /* Sum the individual trapazoids with a linear reduce. Each p sends it's
-     * total to p-1 and p0 prints the results. */
+    /* 
+     * Sum the individual trapazoids with a linear reduce. Each p sends it's
+     * total to p-1 and p0 prints the results. This conditional branch is the
+     * only code that I've modified, other than adding an int type to main to
+     * shut the compiler up.
+     */
     // p0 only receives from p1.
-    if (my_rank == 0) {
+    if (my_rank == 0)  
+    {
         source = 1;
         MPI_Recv( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status );
         total = total + integral;
@@ -93,12 +98,13 @@ int main(int argc, char** argv) {
         dest =  my_rank - 1;
         MPI_Send( &integral, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
     }
-    // everybody else in between p and p0.
+    // everybody else in between p and p0 recvs, adds, and sends.
     else 
     {  
         source = my_rank + 1;
         dest   = my_rank - 1;
         MPI_Recv( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status );
+        // each p adds it's integral to the running total.
         total = total + integral;
         MPI_Send( &total, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
     }
