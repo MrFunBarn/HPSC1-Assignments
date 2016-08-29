@@ -33,11 +33,11 @@ int main(int argc, char* argv[])
      * other p's recive and then send. */
     if ( p == 1 )
     {
-        printf ("Greetings from process 0" )
+        printf ("Greetings from process 0" );
     }
     else if ( my_rank == 0 )
     {
-        sprintf( message, "Greetings from process 0" )
+        sprintf( message, "Greetings from process 0" );
         dest   = 1;
         source = p - 1;
 
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
         printf("%s\n", message);
 
         // Craft and send a new message to the next process.
-        sprintf( message, "Greetings from process %d", &my_rank )
+        sprintf( message, "Greetings from process %d", &my_rank );
         MPI_Send( message, strlen(message)+1, MPI_CHAR, dest, tag, MPI_COMM_WORLD );
     }
     // Close-up shop.
