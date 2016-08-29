@@ -10,7 +10,7 @@
 #include <string.h>
 #include "mpi.h"
 
-int main(int argc, char* argv[]) 
+int main( int argc, char* argv[] )  
 {
     int         my_rank;       /* rank of process      */
     int         p;             /* number of processes  */
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     if ( p == 1 )
     {
         sprintf( message, "Greetings from process 0" );
-        printf("%s\n", message);
+        printf( "%s\n", message );
     }
     else if ( my_rank == 0 )
     {
