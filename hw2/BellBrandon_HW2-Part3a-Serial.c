@@ -6,6 +6,8 @@
  * Part 3a: PPMPI 4.7.2-a Simpsons Rule Serial Program.
  */
 
+#include <stdio.h>
+
 // I nabbed f from the trap program.
 float f(float x) {
     float return_val;
@@ -22,20 +24,34 @@ float simpson (
           float  h   /* in */) 
 {
    float integral; 
-   float p;
-   float q;
-   float r;
+   float x = a;
    
-   // Loop through the local_n strips in the region of integration.
-   for ( int i=0; i<(local_n - 1); i++ )
+   // Take care of the starting and end points.
+   integral = f(a) + f(b);
+   // Loop through the n strips in the region of integration.
+   for ( int i=1; i<(2*n - 1); i++ )
    {
-        p *= (i + 1);
-        integral = ( h / 3 ) * ( f(local_a) + 4(mid_point) + f(local_b) );
+        // increment x by a half interval at a time (we need the mid point).
+        x += h / 2;
+        if ( i % 2 == 0 )
+            integral += ( 2 * f(x) );
+        else 
+            integral += ( 4 * f(x) );
    }
+   integral *= ( h / 3 );
+   return integral;
 }
 
 int main(int argc, char** argv) 
 {
-    int h;
-    int 
+    float  total;
+    float  a = 0;
+    float  b = 1;
+    int    n = 100;
+    float  h;   
+
+    h = (b-a)/n;    
+    total = simpson( a, b, n, h );
+    printf("With n = %d trapezoids, our estimate\n", n);
+    printf("of the integral from %f to %f = %f\n", a, b, total);
 }
