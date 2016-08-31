@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "mpi.h"
 
 // I nabbed f from the trap program.
@@ -63,12 +64,44 @@ int main(int argc, char** argv)
     int         source;    /* Process sending integral  */
     int         dest;      /* All messages go to 0      */
     int         tag = 0;
+    int         verbose = 0; // For determining verbosity level.
     MPI_Status  status;
 
     // Initialize MPI and retreive world size and p's rank.
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &p);
+
+    // Parse the comand line arguments. I'm sure this can be done better,
+    // especially in a parallel enviroment but, I'm tierd and want bed:)
+    if ( argc > 1 )
+    {
+        // Loop though all the arguments if more than on is present.
+        for ( int a=1; a<argc; a++ )
+        {
+            // checks for -i and a convertable int value.
+            if ( !strcmp(argv[a],"-i") && (argc-1) > a && strtol( argv[a+1], NULL, 10 ) )
+            {
+                n = strtol( argv[2], NULL, 10 );
+                // Ensure n is even and pass the loop over the int value.
+                if ( n%2 != 0 )
+                    n++;
+                a++;
+            }
+            // checks for verbose flags.
+            else if ( !strcmp(argv[a],"-v") || !strcmp(argv[a],"--verbose") )
+                verbose = 1;
+            else
+            {
+                if (my_rank == 0)
+                {
+                    printf("==> Invalid arguments\n");
+                    printf("Usage: cmd {-i [int],-v,--verbose}\n");
+                    break;
+                }
+            }
+        }
+    }
 
     // Dertrimine the interval of integration for n bins. ( Common to all ps ).
     h = (b-a)/n;    
@@ -83,10 +116,9 @@ int main(int argc, char** argv)
     integral = simpson(local_a, local_b, local_n, h);
 
     /* 
-     * Sum the individual trapazoids with a linear reduce. Each p sends it's
-     * total to p-1 and p0 prints the results. This conditional branch is the
-     * only code that I've modified, other than adding an int type to main to
-     * shut the compiler up.
+     * Sum the individual regions with a linear reduce. Each p sends it's
+     * total to p-1 and p0 prints the results. Taken from my Paralled Trap
+     * code.
      */
     // p0 only receives from p1.
     if (my_rank == 0)  
@@ -107,14 +139,50 @@ int main(int argc, char** argv)
         source = my_rank + 1;
         dest   = my_rank - 1;
         MPI_Recv( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status );
-        // each p adds it's integral to the running total.
         total = total + integral;
         MPI_Send( &total, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
     }
 
-    // print the total of the integral.
+    // Concludeing output by Process zero. My concludeing output is I'm at UI.
     if ( my_rank == 0 )
     {
+        // Handle the output of the p's partitions if verbose switch set.
+        if ( verbose == 1 )
+        {
+            // Handle the initial process.
+            printf("Process 0: [ 1 ");
+            for( int t=1; t<local_n; t++ )
+            {
+                if ( t%2 == 0 )
+                    printf("2 ");
+                else
+                    printf("4 ");
+            }
+            printf("]\n");
+            // Handle the intermediat Processes.
+            for ( int z=1; z < p-1; z++ )
+            {
+                printf("Process %d: [ ",z);
+                for( int t=0; t<local_n; t++ )
+                {
+                    if ( t%2 == 0 )
+                        printf("2 ");
+                    else
+                        printf("4 ");
+                }
+                printf("]\n");
+            }
+            // Handle the last process.
+            printf("Process %d: [ ",p-1);
+            for( int t=0; t<local_n-1; t++ )
+            {
+                if ( t%2 == 0 )
+                    printf("2 ");
+                else
+                    printf("4 ");
+            }
+            printf("1 ]\n");
+        }
         printf("With n = %d trapezoids, our estimate\n", n);
         printf("of the integral from %f to %f = %f\n", a, b, total);
     }
