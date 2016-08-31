@@ -52,8 +52,7 @@ int main(int argc, char** argv) {
     float       integral;  /* Integral over my interval */
     float       total;     /* Total integral            */
     int         source;    /* Process sending integral  */
-    //int         dest = 0;  /* All messages go to 0      */
-    int         dest;  /* All messages go to 0      */
+    int         dest;      /* All messages go to 0      */
     int         tag = 0;
     MPI_Status  status;
 
@@ -95,7 +94,7 @@ int main(int argc, char** argv) {
     // process p only sends to the next process.
     else if ( my_rank == ( p - 1 ) )
     {
-        dest =  my_rank - 1;
+        dest = my_rank - 1;
         MPI_Send( &integral, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
     }
     // everybody else in between p and p0 recvs, adds, and sends.
@@ -107,7 +106,7 @@ int main(int argc, char** argv) {
         // each p adds it's integral to the running total.
         total = total + integral;
         MPI_Send( &total, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
-    }
+    
 
     /* Print the result */
     if (my_rank == 0) {
