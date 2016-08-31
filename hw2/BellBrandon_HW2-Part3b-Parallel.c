@@ -86,6 +86,8 @@ int main(int argc, char** argv)
                 // Ensure n is even and pass the loop over the int value.
                 if ( n%2 != 0 )
                     n++;
+                else if ( n == 0)
+                    n = 1024;
                 a++;
             }
             // checks for verbose flags.
@@ -183,7 +185,7 @@ int main(int argc, char** argv)
             }
             printf("1 ]\n");
         }
-        printf("With n = %d trapezoids, our estimate\n", n);
+        printf("With n = %d intervals, our estimate\n", n);
         printf("of the integral from %f to %f = %f\n", a, b, total);
     }
 

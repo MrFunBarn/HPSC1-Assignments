@@ -7,6 +7,7 @@ all:
 	$(CC) -o HW2-Part1 $(P1_FILES)
 	$(CC) -o HW2-Part2 $(P2_FILES)
 	gcc -o HW2-Part3-Serial $(P3_FILES)
+	$(CC) -o HW2-Part3-Parallel BellBrandon_HW2-Part3b-Parallel.c
 
 clean:
-	rm HW2-Part1 HW2-Part2 HW2-Part3-Serial
+	rm HW2-Part1 HW2-Part2 HW2-Part3-Serial HW2-Part3-Parallel
