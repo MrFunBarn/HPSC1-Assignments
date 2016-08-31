@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "mpi.h"
 
 // I nabbed f from the trap program.
 float f(float x) {
@@ -64,14 +65,60 @@ int main(int argc, char** argv)
     int         tag = 0;
     MPI_Status  status;
 
-    // Initial MPI and retreive world size and p's rank.
+    // Initialize MPI and retreive world size and p's rank.
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &p);
 
     // Dertrimine the interval of integration for n bins. ( Common to all ps ).
     h = (b-a)/n;    
-    total = simpson( a, b, n, h );
-    printf("With n = %d trapezoids, our estimate\n", n);
-    printf("of the integral from %f to %f = %f\n", a, b, total);
+    // Determine the number of bins in the interval of each p.
+    local_n = n/p;  
+
+    /* Length of each process' interval of
+     * integration = local_n*h.  So my interval
+     * starts at: */
+    local_a = a + my_rank*local_n*h;
+    local_b = local_a + local_n*h;
+    integral = simpson(local_a, local_b, local_n, h);
+
+    /* 
+     * Sum the individual trapazoids with a linear reduce. Each p sends it's
+     * total to p-1 and p0 prints the results. This conditional branch is the
+     * only code that I've modified, other than adding an int type to main to
+     * shut the compiler up.
+     */
+    // p0 only receives from p1.
+    if (my_rank == 0)  
+    {
+        source = 1;
+        MPI_Recv( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status );
+        total = total + integral;
+    }
+    // process p only sends to the next process.
+    else if ( my_rank == ( p - 1 ) )
+    {
+        dest = my_rank - 1;
+        MPI_Send( &integral, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
+    }
+    // everybody else in between p and p0 recvs, adds, and sends.
+    else 
+    {  
+        source = my_rank + 1;
+        dest   = my_rank - 1;
+        MPI_Recv( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status );
+        // each p adds it's integral to the running total.
+        total = total + integral;
+        MPI_Send( &total, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
+    }
+
+    // print the total of the integral.
+    if ( my_rank == 0 )
+    {
+        printf("With n = %d trapezoids, our estimate\n", n);
+        printf("of the integral from %f to %f = %f\n", a, b, total);
+    }
+
+    /* Shut down MPI */
+    MPI_Finalize();
 }
