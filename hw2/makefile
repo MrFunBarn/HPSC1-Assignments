@@ -6,7 +6,6 @@ P3_FILES = BellBrandon_HW2-Part3a-Serial.c
 all:
 	$(CC) -o HW2-Part1 $(P1_FILES)
 	$(CC) -o HW2-Part2 $(P2_FILES)
-	$(CC) -o HW2-Part3-Serial $(P3_FILES)
 	gcc -o HW2-Part3-Serial $(P3_FILES)
 
 clean:

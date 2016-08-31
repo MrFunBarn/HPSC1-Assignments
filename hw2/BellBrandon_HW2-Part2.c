@@ -106,6 +106,7 @@ int main(int argc, char** argv) {
         // each p adds it's integral to the running total.
         total = total + integral;
         MPI_Send( &total, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
+    }
     
 
     /* Print the result */

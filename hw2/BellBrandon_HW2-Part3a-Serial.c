@@ -47,7 +47,7 @@ int main(int argc, char** argv)
     float  total;
     float  a = 0;
     float  b = 1;
-    int    n = 100;
+    int    n = 1024;
     float  h;   
 
     h = (b-a)/n;    
