@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Arch Linux) (preloaded format=latex 2016.8.29)  31 AUG 2016 13:05
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Arch Linux) (preloaded format=latex 2016.8.29)  31 AUG 2016 15:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -185,8 +185,8 @@ Missing character: There is no   in font pcrr7t!
 Missing character: There is no Â in font pcrr7t!
 Missing character: There is no   in font pcrr7t!
 
-Overfull \hbox (24.0pt too wide) in paragraph at lines 72--72
-[]\OT1/pcr/m/n/10 1 // Take care of the starting and end points.[] 
+Overfull \hbox (18.0pt too wide) in paragraph at lines 72--72
+[] \OT1/pcr/m/n/10 // Take care of the starting and end points.[] 
  []
 
 Missing character: There is no Â in font pcrr7t!
@@ -228,26 +228,9 @@ Missing character: There is no Â in font pcrr7t!
 Missing character: There is no   in font pcrr7t!
 Missing character: There is no Â in font pcrr7t!
 Missing character: There is no   in font pcrr7t!
-Missing character: There is no Â in font pcrr7t!
-Missing character: There is no   in font pcrr7t!
-Missing character: There is no Â in font pcrr7t!
-Missing character: There is no   in font pcrr7t!
-Missing character: There is no Â in font pcrr7t!
-Missing character: There is no   in font pcrr7t!
-Missing character: There is no Â in font pcrr7t!
-Missing character: There is no   in font pcrr7t!
-Missing character: There is no Â in font pcrr7t!
-Missing character: There is no   in font pcrr7t!
-Missing character: There is no Â in font pcrr7t!
-Missing character: There is no   in font pcrr7t!
-Missing character: There is no Â in font pcrr7t!
-Missing character: There is no   in font pcrr7t!
-Missing character: There is no Â in font pcrr7t!
-Missing character: There is no   in font pcrr7t!
 
-Overfull \hbox (168.0pt too wide) in paragraph at lines 72--72
-[]\OT1/pcr/m/n/10 6 // increment x by a half interval at a time (we need the mi
-d point).[] 
+Overfull \hbox (24.0pt too wide) in paragraph at lines 72--72
+[]\OT1/pcr/m/n/10 6 // increment x by a half interval at a time.[] 
  []
 
 Missing character: There is no Â in font pcrr7t!
@@ -377,35 +360,38 @@ Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no ™ in font ptmr7t!
 
-Overfull \hbox (60.0pt too wide) in paragraph at lines 98--98
+Overfull \hbox (60.0pt too wide) in paragraph at lines 111--111
 []\OT1/pcr/m/n/10 of the integral from 0.000000 to 1.000000 = 0.664229[] 
  []
 
 
-Overfull \hbox (60.0pt too wide) in paragraph at lines 98--98
+Overfull \hbox (60.0pt too wide) in paragraph at lines 111--111
 []\OT1/pcr/m/n/10 of the integral from 0.000000 to 1.000000 = 0.480710[] 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 98--98
+Overfull \hbox (6.0pt too wide) in paragraph at lines 111--111
 []\OT1/pcr/m/n/10 % mpirun -n 4 ./HW2-Part3-Parallel -i 11 -v[] 
  []
 
 
-Overfull \hbox (60.0pt too wide) in paragraph at lines 98--98
+Overfull \hbox (60.0pt too wide) in paragraph at lines 111--111
 []\OT1/pcr/m/n/10 of the integral from 0.000000 to 1.000000 = 0.480710[] 
  []
 
-[2
 
-] (./BellBrandon_HW2-Report.aux) ) 
+Overfull \hbox (60.0pt too wide) in paragraph at lines 111--111
+[]\OT1/pcr/m/n/10 of the integral from 0.000000 to 1.000000 = 0.379001[] 
+ []
+
+[2] (./BellBrandon_HW2-Report.aux) ) 
 Here is how much of TeX's memory you used:
  1064 strings out of 493014
  19539 string characters out of 6139343
- 80574 words of memory out of 5000000
+ 82574 words of memory out of 5000000
  4686 multiletter control sequences out of 15000+600000
  25572 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  26i,5n,17p,1209b,233s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on BellBrandon_HW2-Report.dvi (2 pages, 9692 bytes).
+Output written on BellBrandon_HW2-Report.dvi (2 pages, 10096 bytes).

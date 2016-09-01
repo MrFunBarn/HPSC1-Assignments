@@ -56,12 +56,12 @@ to 1.000000 = 0.333333
 I started out by writing a serial version of Simpson’s Rule with a fixed function of $f(x) = x^{2}$, fixed region of integration [0,1], and a fixed number of intervals, 1024.  My implementation of Simpsons Rule.
 
 \begin{verbatim}
-1    // Take care of the starting and end points. 
+    // Take care of the starting and end points. 
  2    integral = f(a) + f(b); 
  3    // Loop through the n strips in the region. 
  4    for ( int i=1; i<(2*n - 1); i++ ) 
  5    { 
- 6         // increment x by a half interval at a time (we need the mid point).
+ 6 // increment x by a half interval at a time.
  7         x += h / 2; 
  8         if ( i % 2 == 0 ) 
  9             integral += ( 2 * f(x) ); 
@@ -75,7 +75,7 @@ Then to serialize this implementation, I worked this integration function into t
 
 This parallel Simpson’s Rule code also incorporates command line arguments to set the number of intervals used and and to print out the interval partition assigned to each process. All of the output is handled by process 0 but, all the processes are aware of any arguments given.  This implementation of Simpson's Rule requires that the number of intervals be even so, the code checks the parity of a user defined interval number and if it’s odd, the code increments it by one to make it even and then carries on with the new even interval count. If the interval value entered is not a valid base 10 int value a warning is issued about incorrect arguments, command line argument parsing stops and the program carries on with the hard coded interval count of 1024. Each process determines a new interval count from the command line arguments, if present, so no time consuming message passing is required. 
 
-To implement to the verbose option to print out the interval coefficients being handled by each process, process 0 calculates the partition scheme from the variable of integration and does not depend of communication from the other processes. At present my code has process 0  do this calculation after it has received the total from all the other process. It would probably be more optimal the partitions where determined and and output while process 0 was waiting for the linear reduce to complete, thereby reducing idle process time, but the difference would be minimal at this level I expect. There is a known bug that i've been unabel to track down, setting -v before -i results in the new interval value being read as 0 regardless of specified value. In the case that an interval of 0 is found the code falls back to the hard coded value of 1024.
+To implement the verbose option to print out the interval coefficients being handled by each process, process 0 calculates the partition scheme from the variable of integration and does not depend of communication from the other processes. At present my code has process 0  do this calculation after it has received the total from all the other process. It would probably be more optimal the partitions where determined and and output while process 0 was waiting for the linear reduce to complete, thereby reducing idle process time, but the difference would be minimal at this level I expect. There is a known bug that i've been unabel to track down, setting -v before -i results in the new interval value being read as 0 regardless of specified value. In the case that an interval of 0 is found the code falls back to the hard coded value of 1024.
 
 Examples:
 
@@ -95,6 +95,19 @@ Process 2: [ 2 4 2 ]
 Process 3: [ 2 4 1 ]
 With n = 12 intervals, our estimate
 of the integral from 0.000000 to 1.000000 = 0.480710
+
+mpirun -n 8 ./HW2-Part3-Parallel -i 36 -v
+Process 0: [ 1 4 2 4 ]
+Process 1: [ 2 4 2 4 ]
+Process 2: [ 2 4 2 4 ]
+Process 3: [ 2 4 2 4 ]
+Process 4: [ 2 4 2 4 ]
+Process 5: [ 2 4 2 4 ]
+Process 6: [ 2 4 2 4 ]
+Process 7: [ 2 4 2 1 ]
+With n = 36 intervals, our estimate
+of the integral from 0.000000 to 1.000000 = 0.379001
+
 \end{verbatim}
 
 \end{document}

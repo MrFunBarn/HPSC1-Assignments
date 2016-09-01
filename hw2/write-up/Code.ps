@@ -3,7 +3,7 @@
 %%Title: Enscript Output
 %%For: 
 %%Creator: GNU Enscript 1.6.6
-%%CreationDate: Wed Aug 31 12:41:46 2016
+%%CreationDate: Wed Aug 31 15:36:09 2016
 %%Orientation: Landscape
 %%Pages: (atend)
 %%DocumentMedia: A4 595 842 0 () ()
@@ -858,8 +858,8 @@ _S
 /ftail (BellBrandon_HW2-Part2.c) def
 % User defined strings:
 /pagenumstr (1) def
-/moddatestr (08/30/16) def
-/modtimestr (21:21:01) def
+/moddatestr (08/31/16) def
+/modtimestr (15:33:53) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
@@ -1221,107 +1221,109 @@ do_header
 /F-gs-font 7 7 SF
 402 461 M
 (    MPI_Comm_size\(MPI_COMM_WORLD, &p\);) s
+402 453 M
+(   ) s
 402 445 M
+(    ) s
+/Courier-Bold 7 7 SUF
+418.8 445 M
+(if) s
+/F-gs-font 7 7 SF
+427.2 445 M
+( \( p == 1 \)) s
+402 437 M
+(    {) s
+402 429 M
+(        printf\() s
+/Courier-Bold 7 7 SUF
+465 429 M
+("Please Run with > 1 processes.") s
+/F-gs-font 7 7 SF
+599.4 429 M
+( \);) s
+402 421 M
+(        ) s
+/Courier-Bold 7 7 SUF
+435.6 421 M
+(return) s
+/F-gs-font 7 7 SF
+460.8 421 M
+( 1;) s
+402 413 M
+(    }) s
+402 397 M
 (    h = \(b-a\)/n;    ) s
 /Courier-Oblique 7 7 SUF
-486 445 M
+486 397 M
 (/* h is the same for all processes */) s
 /F-gs-font 7 7 SF
-402 437 M
+402 389 M
 (    local_n = n/p;  ) s
 /Courier-Oblique 7 7 SUF
-486 437 M
+486 389 M
 (/* So is the number of trapezoids */) s
 /F-gs-font 7 7 SF
-402 421 M
+402 373 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-418.8 421 M
+418.8 373 M
 (/* Length of each process' interval of) s
-402 413 M
+402 365 M
 (     * integration = local_n*h.  So my interval) s
-402 405 M
+402 357 M
 (     * starts at: */) s
 /F-gs-font 7 7 SF
-402 397 M
-(    local_a = a + my_rank*local_n*h;) s
-402 389 M
-(    local_b = local_a + local_n*h;) s
-402 381 M
-(    integral = Trap\(local_a, local_b, local_n, h\);) s
-402 365 M
-(    ) s
-/Courier-Oblique 7 7 SUF
-418.8 365 M
-(/* ) s
-402 357 M
-(     * Sum the individual trapazoids with a linear reduce. Each p sends it's) s
 402 349 M
-(     * total to p-1 and p0 prints the results. This conditional branch is the) s
+(    local_a = a + my_rank*local_n*h;) s
 402 341 M
-(     * only code that I've modified, other than adding an int type to main to) s
+(    local_b = local_a + local_n*h;) s
 402 333 M
-(     * shut the compiler up.) s
-402 325 M
-(     */) s
-/F-gs-font 7 7 SF
+(    integral = Trap\(local_a, local_b, local_n, h\);) s
 402 317 M
 (    ) s
 /Courier-Oblique 7 7 SUF
 418.8 317 M
-(// p0 only receives from p1.) s
-/F-gs-font 7 7 SF
+(/* ) s
 402 309 M
-(    ) s
-/Courier-Bold 7 7 SUF
-418.8 309 M
-(if) s
-/F-gs-font 7 7 SF
-427.2 309 M
-( \(my_rank == 0\)  ) s
+(     * Sum the individual trapazoids with a linear reduce. Each p sends it's) s
 402 301 M
-(    {) s
+(     * total to p-1 and p0 prints the results. This conditional branch is the) s
 402 293 M
-(        source = 1;) s
+(     * only code that I've modified, other than adding an int type to main to) s
 402 285 M
-(        MPI_Recv\( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status \);) s
+(     * shut the compiler up.) s
 402 277 M
-(        total = total + integral;) s
+(     */) s
+/F-gs-font 7 7 SF
 402 269 M
-(    }) s
-402 261 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-418.8 261 M
-(// process p only sends to the next process.) s
+418.8 269 M
+(// p0 only receives from p1.) s
 /F-gs-font 7 7 SF
-402 253 M
+402 261 M
 (    ) s
 /Courier-Bold 7 7 SUF
-418.8 253 M
-(else) s
-/F-gs-font 7 7 SF
-435.6 253 M
-( ) s
-/Courier-Bold 7 7 SUF
-439.8 253 M
+418.8 261 M
 (if) s
 /F-gs-font 7 7 SF
-448.2 253 M
-( \( my_rank == \( p - 1 \) \)) s
-402 245 M
+427.2 261 M
+( \(my_rank == 0\)  ) s
+402 253 M
 (    {) s
+402 245 M
+(        source = 1;) s
 402 237 M
-(        dest = my_rank - 1;) s
+(        MPI_Recv\( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status \);) s
 402 229 M
-(        MPI_Send\( &integral, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD \);) s
+(        total = total + integral;) s
 402 221 M
 (    }) s
 402 213 M
 (    ) s
 /Courier-Oblique 7 7 SUF
 418.8 213 M
-(// everybody else in between p and p0 recvs, adds, and sends.) s
+(// process p only sends to the next process.) s
 /F-gs-font 7 7 SF
 402 205 M
 (    ) s
@@ -1331,104 +1333,98 @@ do_header
 /F-gs-font 7 7 SF
 435.6 205 M
 ( ) s
-402 197 M
-(    {  ) s
-402 189 M
-(        source = my_rank + 1;) s
-402 181 M
-(        dest   = my_rank - 1;) s
-402 173 M
-(        MPI_Recv\( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status \);) s
-402 165 M
-(        ) s
-/Courier-Oblique 7 7 SUF
-435.6 165 M
-(// each p adds it's integral to the running total.) s
-/F-gs-font 7 7 SF
-402 157 M
-(        total = total + integral;) s
-402 149 M
-(        MPI_Send\( &total, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD \);) s
-402 141 M
-(    }) s
-402 133 M
-(    ) s
-402 117 M
-(    ) s
-/Courier-Oblique 7 7 SUF
-418.8 117 M
-(/* Print the result */) s
-/F-gs-font 7 7 SF
-402 109 M
-(    ) s
 /Courier-Bold 7 7 SUF
-418.8 109 M
+439.8 205 M
 (if) s
 /F-gs-font 7 7 SF
-427.2 109 M
-( \(my_rank == 0\) {) s
-402 101 M
-(        printf\() s
-/Courier-Bold 7 7 SUF
-465 101 M
-("With n = %d trapezoids, our estimate\\n") s
-/F-gs-font 7 7 SF
-633 101 M
-(,) s
-402 93 M
-(            n\);) s
-402 85 M
-(        printf\() s
-/Courier-Bold 7 7 SUF
-465 85 M
-("of the integral from %f to %f = %f\\n") s
-/F-gs-font 7 7 SF
-624.6 85 M
-(,) s
-402 77 M
-(            a, b, total\);) s
-402 69 M
+448.2 205 M
+( \( my_rank == \( p - 1 \) \)) s
+402 197 M
+(    {) s
+402 189 M
+(        dest = my_rank - 1;) s
+402 181 M
+(        MPI_Send\( &integral, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD \);) s
+402 173 M
 (    }) s
-402 53 M
+402 165 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-418.8 53 M
+418.8 165 M
+(// everybody else in between p and p0 recvs, adds, and sends.) s
+/F-gs-font 7 7 SF
+402 157 M
+(    ) s
+/Courier-Bold 7 7 SUF
+418.8 157 M
+(else) s
+/F-gs-font 7 7 SF
+435.6 157 M
+( ) s
+402 149 M
+(    {  ) s
+402 141 M
+(        source = my_rank + 1;) s
+402 133 M
+(        dest   = my_rank - 1;) s
+402 125 M
+(        MPI_Recv\( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status \);) s
+402 117 M
+(        ) s
+/Courier-Oblique 7 7 SUF
+435.6 117 M
+(// each p adds it's integral to the running total.) s
+/F-gs-font 7 7 SF
+402 109 M
+(        total = total + integral;) s
+402 101 M
+(        MPI_Send\( &total, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD \);) s
+402 93 M
+(    }) s
+402 85 M
+(    ) s
+402 69 M
+(    ) s
+/Courier-Oblique 7 7 SUF
+418.8 69 M
+(/* Print the result */) s
+/F-gs-font 7 7 SF
+402 61 M
+(    ) s
+/Courier-Bold 7 7 SUF
+418.8 61 M
+(if) s
+/F-gs-font 7 7 SF
+427.2 61 M
+( \(my_rank == 0\) {) s
+402 53 M
+(        printf\() s
+/Courier-Bold 7 7 SUF
+465 53 M
+("With n = %d trapezoids, our estimate\\n") s
+/F-gs-font 7 7 SF
+633 53 M
+(,) s
+402 45 M
+(            n\);) s
+402 37 M
+(        printf\() s
+/Courier-Bold 7 7 SUF
+465 37 M
+("of the integral from %f to %f = %f\\n") s
+/F-gs-font 7 7 SF
+624.6 37 M
+(,) s
+402 29 M
+(            a, b, total\);) s
+402 21 M
+(    }) s
+402 5 M
+(    ) s
+/Courier-Oblique 7 7 SUF
+418.8 5 M
 (/* Shut down MPI */) s
 /F-gs-font 7 7 SF
-402 45 M
-(    MPI_Finalize\(\);) s
-402 37 M
-(} ) s
-/Courier-Oblique 7 7 SUF
-410.4 37 M
-(/*  main  */) s
-/F-gs-font 7 7 SF
-/Courier-Bold 7 7 SUF
-402 13 M
-(float) s
-/F-gs-font 7 7 SF
-423 13 M
-( ) s
-/Courier-Bold 7 7 SUF
-427.2 13 M
-(Trap) s
-/F-gs-font 7 7 SF
-444 13 M
-(\() s
-402 5 M
-(          ) s
-/Courier-Bold 7 7 SUF
-444 5 M
-(float) s
-/F-gs-font 7 7 SF
-465 5 M
-(  local_a   ) s
-/Courier-Oblique 7 7 SUF
-515.4 5 M
-(/* in */) s
-/F-gs-font 7 7 SF
-549 5 M
-(,) s
 _R
 S
 %%Page: (2) 3
@@ -1442,187 +1438,221 @@ _S
 /ftail (BellBrandon_HW2-Part2.c) def
 % User defined strings:
 /pagenumstr (2) def
-/moddatestr (08/30/16) def
-/modtimestr (21:21:01) def
+/moddatestr (08/31/16) def
+/modtimestr (15:33:53) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
 column_lines
 do_header
 5 501 M
-(          ) s
+(    MPI_Finalize\(\);) s
+5 493 M
+(} ) s
+/Courier-Oblique 7 7 SUF
+13.4 493 M
+(/*  main  */) s
+/F-gs-font 7 7 SF
 /Courier-Bold 7 7 SUF
-47 501 M
+5 469 M
 (float) s
 /F-gs-font 7 7 SF
-68 501 M
+26 469 M
+( ) s
+/Courier-Bold 7 7 SUF
+30.2 469 M
+(Trap) s
+/F-gs-font 7 7 SF
+47 469 M
+(\() s
+5 461 M
+(          ) s
+/Courier-Bold 7 7 SUF
+47 461 M
+(float) s
+/F-gs-font 7 7 SF
+68 461 M
+(  local_a   ) s
+/Courier-Oblique 7 7 SUF
+118.4 461 M
+(/* in */) s
+/F-gs-font 7 7 SF
+152 461 M
+(,) s
+5 453 M
+(          ) s
+/Courier-Bold 7 7 SUF
+47 453 M
+(float) s
+/F-gs-font 7 7 SF
+68 453 M
 (  local_b   ) s
 /Courier-Oblique 7 7 SUF
-118.4 501 M
+118.4 453 M
 (/* in */) s
 /F-gs-font 7 7 SF
-152 501 M
+152 453 M
 (,) s
-5 493 M
+5 445 M
 (          ) s
 /Courier-Bold 7 7 SUF
-47 493 M
+47 445 M
 (int) s
 /F-gs-font 7 7 SF
-59.6 493 M
+59.6 445 M
 (    local_n   ) s
 /Courier-Oblique 7 7 SUF
-118.4 493 M
+118.4 445 M
 (/* in */) s
 /F-gs-font 7 7 SF
-152 493 M
+152 445 M
 (,) s
-5 485 M
+5 437 M
 (          ) s
 /Courier-Bold 7 7 SUF
-47 485 M
+47 437 M
 (float) s
 /F-gs-font 7 7 SF
-68 485 M
+68 437 M
 (  h         ) s
 /Courier-Oblique 7 7 SUF
-118.4 485 M
+118.4 437 M
 (/* in */) s
 /F-gs-font 7 7 SF
-152 485 M
+152 437 M
 (\) {) s
-5 469 M
+5 421 M
 (    ) s
 /Courier-Bold 7 7 SUF
-21.8 469 M
+21.8 421 M
 (float) s
 /F-gs-font 7 7 SF
-42.8 469 M
+42.8 421 M
 ( integral;   ) s
 /Courier-Oblique 7 7 SUF
-97.4 469 M
+97.4 421 M
 (/* Store result in integral  */) s
 /F-gs-font 7 7 SF
-5 461 M
-(    ) s
-/Courier-Bold 7 7 SUF
-21.8 461 M
-(float) s
-/F-gs-font 7 7 SF
-42.8 461 M
-( x;) s
-5 453 M
-(    ) s
-/Courier-Bold 7 7 SUF
-21.8 453 M
-(int) s
-/F-gs-font 7 7 SF
-34.4 453 M
-( i;) s
-5 437 M
-(    ) s
-/Courier-Bold 7 7 SUF
-21.8 437 M
-(float) s
-/F-gs-font 7 7 SF
-42.8 437 M
-( f\() s
-/Courier-Bold 7 7 SUF
-55.4 437 M
-(float) s
-/F-gs-font 7 7 SF
-76.4 437 M
-( x\); ) s
-/Courier-Oblique 7 7 SUF
-97.4 437 M
-(/* function we're integrating */) s
-/F-gs-font 7 7 SF
-5 421 M
-(    integral = \(f\(local_a\) + f\(local_b\)\)/2.0;) s
 5 413 M
-(    x = local_a;) s
+(    ) s
+/Courier-Bold 7 7 SUF
+21.8 413 M
+(float) s
+/F-gs-font 7 7 SF
+42.8 413 M
+( x;) s
 5 405 M
 (    ) s
 /Courier-Bold 7 7 SUF
 21.8 405 M
-(for) s
+(int) s
 /F-gs-font 7 7 SF
 34.4 405 M
-( \(i = 1; i <= local_n-1; i++\) {) s
-5 397 M
-(        x = x + h;) s
+( i;) s
 5 389 M
-(        integral = integral + f\(x\);) s
-5 381 M
-(    }) s
-5 373 M
-(    integral = integral*h;) s
-5 365 M
 (    ) s
 /Courier-Bold 7 7 SUF
-21.8 365 M
+21.8 389 M
+(float) s
+/F-gs-font 7 7 SF
+42.8 389 M
+( f\() s
+/Courier-Bold 7 7 SUF
+55.4 389 M
+(float) s
+/F-gs-font 7 7 SF
+76.4 389 M
+( x\); ) s
+/Courier-Oblique 7 7 SUF
+97.4 389 M
+(/* function we're integrating */) s
+/F-gs-font 7 7 SF
+5 373 M
+(    integral = \(f\(local_a\) + f\(local_b\)\)/2.0;) s
+5 365 M
+(    x = local_a;) s
+5 357 M
+(    ) s
+/Courier-Bold 7 7 SUF
+21.8 357 M
+(for) s
+/F-gs-font 7 7 SF
+34.4 357 M
+( \(i = 1; i <= local_n-1; i++\) {) s
+5 349 M
+(        x = x + h;) s
+5 341 M
+(        integral = integral + f\(x\);) s
+5 333 M
+(    }) s
+5 325 M
+(    integral = integral*h;) s
+5 317 M
+(    ) s
+/Courier-Bold 7 7 SUF
+21.8 317 M
 (return) s
 /F-gs-font 7 7 SF
-47 365 M
+47 317 M
 ( integral;) s
-5 357 M
+5 309 M
 (} ) s
 /Courier-Oblique 7 7 SUF
-13.4 357 M
+13.4 309 M
 (/*  Trap  */) s
 /F-gs-font 7 7 SF
 /Courier-Bold 7 7 SUF
-5 333 M
+5 285 M
 (float) s
 /F-gs-font 7 7 SF
-26 333 M
+26 285 M
 ( ) s
 /Courier-Bold 7 7 SUF
-30.2 333 M
+30.2 285 M
 (f) s
 /F-gs-font 7 7 SF
-34.4 333 M
+34.4 285 M
 (\() s
 /Courier-Bold 7 7 SUF
-38.6 333 M
+38.6 285 M
 (float) s
 /F-gs-font 7 7 SF
-59.6 333 M
+59.6 285 M
 ( x\) {) s
-5 325 M
+5 277 M
 (    ) s
 /Courier-Bold 7 7 SUF
-21.8 325 M
+21.8 277 M
 (float) s
 /F-gs-font 7 7 SF
-42.8 325 M
+42.8 277 M
 ( return_val;) s
-5 317 M
+5 269 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-21.8 317 M
+21.8 269 M
 (/* Calculate f\(x\). */) s
 /F-gs-font 7 7 SF
-5 309 M
+5 261 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-21.8 309 M
+21.8 261 M
 (/* Store calculation in return_val. */) s
 /F-gs-font 7 7 SF
-5 301 M
+5 253 M
 (    return_val = x*x;) s
-5 293 M
+5 245 M
 (    ) s
 /Courier-Bold 7 7 SUF
-21.8 293 M
+21.8 245 M
 (return) s
 /F-gs-font 7 7 SF
-47 293 M
+47 245 M
 ( return_val;) s
-5 285 M
+5 237 M
 (} ) s
 /Courier-Oblique 7 7 SUF
-13.4 285 M
+13.4 237 M
 (/* f */) s
 /F-gs-font 7 7 SF
 _R
@@ -1989,7 +2019,7 @@ _S
 % User defined strings:
 /pagenumstr (1) def
 /moddatestr (08/31/16) def
-/modtimestr (12:29:28) def
+/modtimestr (15:34:22) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
@@ -2503,254 +2533,262 @@ do_header
 (    MPI_Comm_rank\(MPI_COMM_WORLD, &my_rank\);) s
 402 429 M
 (    MPI_Comm_size\(MPI_COMM_WORLD, &p\);) s
+402 421 M
+(    ) s
 402 413 M
 (    ) s
 /Courier-Oblique 7 7 SUF
 418.8 413 M
-(// Parse the comand line arguments. I'm sure this can be done better,) s
+(// CHeck to make sure that more than process are running.) s
 /F-gs-font 7 7 SF
 402 405 M
 (    ) s
-/Courier-Oblique 7 7 SUF
-418.8 405 M
-(// especially in a parallel enviroment but, I'm tierd and want bed:\)) s
-/F-gs-font 7 7 SF
-402 397 M
-(    ) s
 /Courier-Bold 7 7 SUF
-418.8 397 M
+418.8 405 M
 (if) s
 /F-gs-font 7 7 SF
-427.2 397 M
-( \( argc > 1 \)) s
-402 389 M
+427.2 405 M
+( \( p == 1 \)) s
+402 397 M
 (    {) s
+402 389 M
+(        printf\() s
+/Courier-Bold 7 7 SUF
+465 389 M
+("Please Run with > 1 processes.") s
+/F-gs-font 7 7 SF
+599.4 389 M
+( \);) s
 402 381 M
 (        ) s
-/Courier-Oblique 7 7 SUF
+/Courier-Bold 7 7 SUF
 435.6 381 M
+(return) s
+/F-gs-font 7 7 SF
+460.8 381 M
+( 1;) s
+402 373 M
+(    }) s
+402 349 M
+(    ) s
+/Courier-Oblique 7 7 SUF
+418.8 349 M
+(// Parse the comand line arguments. I'm sure this can be done better,) s
+/F-gs-font 7 7 SF
+402 341 M
+(    ) s
+/Courier-Oblique 7 7 SUF
+418.8 341 M
+(// especially in a parallel enviroment but, I'm tierd and want bed:\)) s
+/F-gs-font 7 7 SF
+402 333 M
+(    ) s
+/Courier-Bold 7 7 SUF
+418.8 333 M
+(if) s
+/F-gs-font 7 7 SF
+427.2 333 M
+( \( argc > 1 \)) s
+402 325 M
+(    {) s
+402 317 M
+(        ) s
+/Courier-Oblique 7 7 SUF
+435.6 317 M
 (// Loop though all the arguments if more than on is present.) s
 /F-gs-font 7 7 SF
-402 373 M
+402 309 M
 (        ) s
 /Courier-Bold 7 7 SUF
-435.6 373 M
+435.6 309 M
 (for) s
 /F-gs-font 7 7 SF
-448.2 373 M
+448.2 309 M
 ( \( ) s
 /Courier-Bold 7 7 SUF
-460.8 373 M
+460.8 309 M
 (int) s
 /F-gs-font 7 7 SF
-473.4 373 M
+473.4 309 M
 ( a=1; a<argc; a++ \)) s
-402 365 M
+402 301 M
 (        {) s
-402 357 M
+402 293 M
 (            ) s
 /Courier-Oblique 7 7 SUF
-452.4 357 M
+452.4 293 M
 (// checks for -i and a convertable int value.) s
 /F-gs-font 7 7 SF
-402 349 M
+402 285 M
 (            ) s
 /Courier-Bold 7 7 SUF
-452.4 349 M
+452.4 285 M
 (if) s
 /F-gs-font 7 7 SF
-460.8 349 M
+460.8 285 M
 ( \( !strcmp\(argv[a],) s
 /Courier-Bold 7 7 SUF
-540.6 349 M
+540.6 285 M
 ("-i") s
 /F-gs-font 7 7 SF
-557.4 349 M
+557.4 285 M
 (\) && \(argc-1\) > a && strtol\( argv[a+1], NULL, 10 \) \)) s
-402 341 M
+402 277 M
 (            {) s
-402 333 M
+402 269 M
 (                n = strtol\( argv[2], NULL, 10 \);) s
-402 325 M
+402 261 M
 (                ) s
 /Courier-Oblique 7 7 SUF
-469.2 325 M
+469.2 261 M
 (// Ensure n is even and pass the loop over the int value.) s
 /F-gs-font 7 7 SF
-402 317 M
+402 253 M
 (                ) s
 /Courier-Bold 7 7 SUF
-469.2 317 M
+469.2 253 M
 (if) s
 /F-gs-font 7 7 SF
-477.6 317 M
+477.6 253 M
 ( \( n%2 != 0 \)) s
-402 309 M
+402 245 M
 (                    n++;) s
-402 301 M
+402 237 M
 (                ) s
 /Courier-Bold 7 7 SUF
-469.2 301 M
+469.2 237 M
 (else) s
 /F-gs-font 7 7 SF
-486 301 M
+486 237 M
 ( ) s
 /Courier-Bold 7 7 SUF
-490.2 301 M
+490.2 237 M
 (if) s
 /F-gs-font 7 7 SF
-498.6 301 M
+498.6 237 M
 ( \( n == 0\)) s
-402 293 M
+402 229 M
 (                    n = 1024;) s
-402 285 M
+402 221 M
 (                a++;) s
-402 277 M
+402 213 M
 (            }) s
-402 269 M
+402 205 M
 (            ) s
 /Courier-Oblique 7 7 SUF
-452.4 269 M
+452.4 205 M
 (// checks for verbose flags.) s
 /F-gs-font 7 7 SF
-402 261 M
+402 197 M
 (            ) s
 /Courier-Bold 7 7 SUF
-452.4 261 M
+452.4 197 M
 (else) s
 /F-gs-font 7 7 SF
-469.2 261 M
+469.2 197 M
 ( ) s
 /Courier-Bold 7 7 SUF
-473.4 261 M
+473.4 197 M
 (if) s
 /F-gs-font 7 7 SF
-481.8 261 M
+481.8 197 M
 ( \( !strcmp\(argv[a],) s
 /Courier-Bold 7 7 SUF
-561.6 261 M
+561.6 197 M
 ("-v") s
 /F-gs-font 7 7 SF
-578.4 261 M
+578.4 197 M
 (\) || !strcmp\(argv[a],) s
 /Courier-Bold 7 7 SUF
-666.6 261 M
+666.6 197 M
 ("--verbose") s
 /F-gs-font 7 7 SF
-712.8 261 M
+712.8 197 M
 (\) \)) s
-402 253 M
+402 189 M
 (                verbose = 1;) s
-402 245 M
+402 181 M
 (            ) s
 /Courier-Bold 7 7 SUF
-452.4 245 M
+452.4 181 M
 (else) s
 /F-gs-font 7 7 SF
-402 237 M
+402 173 M
 (            {) s
-402 229 M
+402 165 M
 (                ) s
 /Courier-Bold 7 7 SUF
-469.2 229 M
+469.2 165 M
 (if) s
 /F-gs-font 7 7 SF
-477.6 229 M
+477.6 165 M
 ( \(my_rank == 0\)) s
-402 221 M
+402 157 M
 (                {) s
-402 213 M
+402 149 M
 (                    printf\() s
 /Courier-Bold 7 7 SUF
-515.4 213 M
+515.4 149 M
 ("==> Invalid arguments\\n") s
 /F-gs-font 7 7 SF
-620.4 213 M
+620.4 149 M
 (\);) s
-402 205 M
+402 141 M
 (                    printf\() s
 /Courier-Bold 7 7 SUF
-515.4 205 M
+515.4 141 M
 ("Usage: cmd {-i [int],-v,--verbose}\\n") s
 /F-gs-font 7 7 SF
-675 205 M
+675 141 M
 (\);) s
-402 197 M
+402 133 M
 (                    ) s
 /Courier-Bold 7 7 SUF
-486 197 M
+486 133 M
 (break) s
 /F-gs-font 7 7 SF
-507 197 M
+507 133 M
 (;) s
-402 189 M
+402 125 M
 (                }) s
-402 181 M
+402 117 M
 (            }) s
-402 173 M
+402 109 M
 (        }) s
-402 165 M
+402 101 M
 (    }) s
-402 149 M
+402 85 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-418.8 149 M
+418.8 85 M
 (// Dertrimine the interval of integration for n bins. \( Common to all ps \).) s
 /F-gs-font 7 7 SF
-402 141 M
+402 77 M
 (    h = \(b-a\)/n;    ) s
-402 133 M
+402 69 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-418.8 133 M
+418.8 69 M
 (// Determine the number of bins in the interval of each p.) s
 /F-gs-font 7 7 SF
-402 125 M
+402 61 M
 (    local_n = n/p;  ) s
-402 109 M
+402 45 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-418.8 109 M
+418.8 45 M
 (/* Length of each process' interval of) s
-402 101 M
+402 37 M
 (     * integration = local_n*h.  So my interval) s
-402 93 M
+402 29 M
 (     * starts at: */) s
 /F-gs-font 7 7 SF
-402 85 M
-(    local_a = a + my_rank*local_n*h;) s
-402 77 M
-(    local_b = local_a + local_n*h;) s
-402 69 M
-(    integral = simpson\(local_a, local_b, local_n, h\);) s
-402 53 M
-(    ) s
-/Courier-Oblique 7 7 SUF
-418.8 53 M
-(/* ) s
-402 45 M
-(     * Sum the individual regions with a linear reduce. Each p sends it's) s
-402 37 M
-(     * total to p-1 and p0 prints the results. Taken from my Paralled Trap) s
-402 29 M
-(     * code.) s
 402 21 M
-(     */) s
-/F-gs-font 7 7 SF
+(    local_a = a + my_rank*local_n*h;) s
 402 13 M
-(    ) s
-/Courier-Oblique 7 7 SUF
-418.8 13 M
-(// p0 only receives from p1.) s
-/F-gs-font 7 7 SF
+(    local_b = local_a + local_n*h;) s
 402 5 M
-(    ) s
-/Courier-Bold 7 7 SUF
-418.8 5 M
-(if) s
-/F-gs-font 7 7 SF
-427.2 5 M
-( \(my_rank == 0\)  ) s
+(    integral = simpson\(local_a, local_b, local_n, h\);) s
 _R
 S
 %%Page: (2) 6
@@ -2765,367 +2803,395 @@ _S
 % User defined strings:
 /pagenumstr (2) def
 /moddatestr (08/31/16) def
-/modtimestr (12:29:28) def
+/modtimestr (15:34:22) def
 /user_header_p false def
 /user_footer_p false def
 %%EndPageSetup
 column_lines
 do_header
-5 501 M
-(    {) s
 5 493 M
-(        source = 1;) s
-5 485 M
-(        MPI_Recv\( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status \);) s
-5 477 M
-(        total = total + integral;) s
-5 469 M
-(    }) s
-5 461 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-21.8 461 M
-(// process p only sends to the next process.) s
+21.8 493 M
+(/* ) s
+5 485 M
+(     * Sum the individual regions with a linear reduce. Each p sends it's) s
+5 477 M
+(     * total to p-1 and p0 prints the results. Taken from my Paralled Trap) s
+5 469 M
+(     * code.) s
+5 461 M
+(     */) s
 /F-gs-font 7 7 SF
 5 453 M
 (    ) s
-/Courier-Bold 7 7 SUF
+/Courier-Oblique 7 7 SUF
 21.8 453 M
-(else) s
+(// p0 only receives from p1.) s
 /F-gs-font 7 7 SF
-38.6 453 M
-( ) s
+5 445 M
+(    ) s
 /Courier-Bold 7 7 SUF
-42.8 453 M
+21.8 445 M
 (if) s
 /F-gs-font 7 7 SF
-51.2 453 M
-( \( my_rank == \( p - 1 \) \)) s
-5 445 M
-(    {) s
+30.2 445 M
+( \(my_rank == 0\)  ) s
 5 437 M
-(        dest = my_rank - 1;) s
+(    {) s
 5 429 M
-(        MPI_Send\( &integral, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD \);) s
+(        source = 1;) s
 5 421 M
-(    }) s
+(        MPI_Recv\( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status \);) s
 5 413 M
+(        total = total + integral;) s
+5 405 M
+(    }) s
+5 397 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-21.8 413 M
+21.8 397 M
+(// process p only sends to the next process.) s
+/F-gs-font 7 7 SF
+5 389 M
+(    ) s
+/Courier-Bold 7 7 SUF
+21.8 389 M
+(else) s
+/F-gs-font 7 7 SF
+38.6 389 M
+( ) s
+/Courier-Bold 7 7 SUF
+42.8 389 M
+(if) s
+/F-gs-font 7 7 SF
+51.2 389 M
+( \( my_rank == \( p - 1 \) \)) s
+5 381 M
+(    {) s
+5 373 M
+(        dest = my_rank - 1;) s
+5 365 M
+(        MPI_Send\( &integral, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD \);) s
+5 357 M
+(    }) s
+5 349 M
+(    ) s
+/Courier-Oblique 7 7 SUF
+21.8 349 M
 (// everybody else in between p and p0 recvs, adds, and sends.) s
 /F-gs-font 7 7 SF
-5 405 M
+5 341 M
 (    ) s
 /Courier-Bold 7 7 SUF
-21.8 405 M
+21.8 341 M
 (else) s
 /F-gs-font 7 7 SF
-38.6 405 M
+38.6 341 M
 ( ) s
-5 397 M
-(    {  ) s
-5 389 M
-(        source = my_rank + 1;) s
-5 381 M
-(        dest   = my_rank - 1;) s
-5 373 M
-(        MPI_Recv\( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status \);) s
-5 365 M
-(        total = total + integral;) s
-5 357 M
-(        MPI_Send\( &total, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD \);) s
-5 349 M
-(    }) s
 5 333 M
+(    {  ) s
+5 325 M
+(        source = my_rank + 1;) s
+5 317 M
+(        dest   = my_rank - 1;) s
+5 309 M
+(        MPI_Recv\( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status \);) s
+5 301 M
+(        total = total + integral;) s
+5 293 M
+(        MPI_Send\( &total, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD \);) s
+5 285 M
+(    }) s
+5 269 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-21.8 333 M
+21.8 269 M
 (// Concludeing output by Process zero. My concludeing output is I'm at UI.) s
 /F-gs-font 7 7 SF
-5 325 M
+5 261 M
 (    ) s
 /Courier-Bold 7 7 SUF
-21.8 325 M
+21.8 261 M
 (if) s
 /F-gs-font 7 7 SF
-30.2 325 M
+30.2 261 M
 ( \( my_rank == 0 \)) s
-5 317 M
+5 253 M
 (    {) s
-5 309 M
+5 245 M
 (        ) s
 /Courier-Oblique 7 7 SUF
-38.6 309 M
+38.6 245 M
 (// Handle the output of the p's partitions if verbose switch set.) s
 /F-gs-font 7 7 SF
-5 301 M
+5 237 M
 (        ) s
 /Courier-Bold 7 7 SUF
-38.6 301 M
+38.6 237 M
 (if) s
 /F-gs-font 7 7 SF
-47 301 M
+47 237 M
 ( \( verbose == 1 \)) s
-5 293 M
+5 229 M
 (        {) s
-5 285 M
+5 221 M
 (            ) s
 /Courier-Oblique 7 7 SUF
-55.4 285 M
+55.4 221 M
 (// Handle the initial process.) s
 /F-gs-font 7 7 SF
-5 277 M
-(            printf\() s
-/Courier-Bold 7 7 SUF
-84.8 277 M
-("Process 0: [ 1 ") s
-/F-gs-font 7 7 SF
-156.2 277 M
-(\);) s
-5 269 M
-(            ) s
-/Courier-Bold 7 7 SUF
-55.4 269 M
-(for) s
-/F-gs-font 7 7 SF
-68 269 M
-(\( ) s
-/Courier-Bold 7 7 SUF
-76.4 269 M
-(int) s
-/F-gs-font 7 7 SF
-89 269 M
-( t=1; t<local_n; t++ \)) s
-5 261 M
-(            {) s
-5 253 M
-(                ) s
-/Courier-Bold 7 7 SUF
-72.2 253 M
-(if) s
-/F-gs-font 7 7 SF
-80.6 253 M
-( \( t%2 == 0 \)) s
-5 245 M
-(                    printf\() s
-/Courier-Bold 7 7 SUF
-118.4 245 M
-("2 ") s
-/F-gs-font 7 7 SF
-135.2 245 M
-(\);) s
-5 237 M
-(                ) s
-/Courier-Bold 7 7 SUF
-72.2 237 M
-(else) s
-/F-gs-font 7 7 SF
-5 229 M
-(                    printf\() s
-/Courier-Bold 7 7 SUF
-118.4 229 M
-("4 ") s
-/F-gs-font 7 7 SF
-135.2 229 M
-(\);) s
-5 221 M
-(            }) s
 5 213 M
 (            printf\() s
 /Courier-Bold 7 7 SUF
 84.8 213 M
-("]\\n") s
+("Process 0: [ 1 ") s
 /F-gs-font 7 7 SF
-105.8 213 M
+156.2 213 M
 (\);) s
 5 205 M
 (            ) s
-/Courier-Oblique 7 7 SUF
-55.4 205 M
-(// Handle the intermediat Processes.) s
-/F-gs-font 7 7 SF
-5 197 M
-(            ) s
 /Courier-Bold 7 7 SUF
-55.4 197 M
+55.4 205 M
 (for) s
 /F-gs-font 7 7 SF
-68 197 M
-( \( ) s
+68 205 M
+(\( ) s
 /Courier-Bold 7 7 SUF
-80.6 197 M
+76.4 205 M
 (int) s
 /F-gs-font 7 7 SF
-93.2 197 M
-( z=1; z < p-1; z++ \)) s
-5 189 M
+89 205 M
+( t=1; t<local_n; t++ \)) s
+5 197 M
 (            {) s
-5 181 M
-(                printf\() s
+5 189 M
+(                ) s
 /Courier-Bold 7 7 SUF
-101.6 181 M
-("Process %d: [ ") s
+72.2 189 M
+(if) s
 /F-gs-font 7 7 SF
-168.8 181 M
-(,z\);) s
+80.6 189 M
+( \( t%2 == 0 \)) s
+5 181 M
+(                    printf\() s
+/Courier-Bold 7 7 SUF
+118.4 181 M
+("2 ") s
+/F-gs-font 7 7 SF
+135.2 181 M
+(\);) s
 5 173 M
 (                ) s
 /Courier-Bold 7 7 SUF
 72.2 173 M
-(for) s
-/F-gs-font 7 7 SF
-84.8 173 M
-(\( ) s
-/Courier-Bold 7 7 SUF
-93.2 173 M
-(int) s
-/F-gs-font 7 7 SF
-105.8 173 M
-( t=0; t<local_n; t++ \)) s
-5 165 M
-(                {) s
-5 157 M
-(                    ) s
-/Courier-Bold 7 7 SUF
-89 157 M
-(if) s
-/F-gs-font 7 7 SF
-97.4 157 M
-( \( t%2 == 0 \)) s
-5 149 M
-(                        printf\() s
-/Courier-Bold 7 7 SUF
-135.2 149 M
-("2 ") s
-/F-gs-font 7 7 SF
-152 149 M
-(\);) s
-5 141 M
-(                    ) s
-/Courier-Bold 7 7 SUF
-89 141 M
 (else) s
 /F-gs-font 7 7 SF
-5 133 M
-(                        printf\() s
+5 165 M
+(                    printf\() s
 /Courier-Bold 7 7 SUF
-135.2 133 M
+118.4 165 M
 ("4 ") s
 /F-gs-font 7 7 SF
-152 133 M
+135.2 165 M
 (\);) s
+5 157 M
+(            }) s
+5 149 M
+(            printf\() s
+/Courier-Bold 7 7 SUF
+84.8 149 M
+("]\\n") s
+/F-gs-font 7 7 SF
+105.8 149 M
+(\);) s
+5 141 M
+(            ) s
+/Courier-Oblique 7 7 SUF
+55.4 141 M
+(// Handle the intermediat Processes.) s
+/F-gs-font 7 7 SF
+5 133 M
+(            ) s
+/Courier-Bold 7 7 SUF
+55.4 133 M
+(for) s
+/F-gs-font 7 7 SF
+68 133 M
+( \( ) s
+/Courier-Bold 7 7 SUF
+80.6 133 M
+(int) s
+/F-gs-font 7 7 SF
+93.2 133 M
+( z=1; z < p-1; z++ \)) s
 5 125 M
-(                }) s
+(            {) s
 5 117 M
 (                printf\() s
 /Courier-Bold 7 7 SUF
 101.6 117 M
-("]\\n") s
-/F-gs-font 7 7 SF
-122.6 117 M
-(\);) s
-5 109 M
-(            }) s
-5 101 M
-(            ) s
-/Courier-Oblique 7 7 SUF
-55.4 101 M
-(// Handle the last process.) s
-/F-gs-font 7 7 SF
-5 93 M
-(            printf\() s
-/Courier-Bold 7 7 SUF
-84.8 93 M
 ("Process %d: [ ") s
 /F-gs-font 7 7 SF
-152 93 M
-(,p-1\);) s
-5 85 M
-(            ) s
+168.8 117 M
+(,z\);) s
+5 109 M
+(                ) s
 /Courier-Bold 7 7 SUF
-55.4 85 M
+72.2 109 M
 (for) s
 /F-gs-font 7 7 SF
-68 85 M
+84.8 109 M
 (\( ) s
 /Courier-Bold 7 7 SUF
-76.4 85 M
+93.2 109 M
 (int) s
 /F-gs-font 7 7 SF
-89 85 M
-( t=0; t<local_n-1; t++ \)) s
-5 77 M
-(            {) s
-5 69 M
-(                ) s
+105.8 109 M
+( t=0; t<local_n; t++ \)) s
+5 101 M
+(                {) s
+5 93 M
+(                    ) s
 /Courier-Bold 7 7 SUF
-72.2 69 M
+89 93 M
 (if) s
 /F-gs-font 7 7 SF
-80.6 69 M
+97.4 93 M
 ( \( t%2 == 0 \)) s
-5 61 M
-(                    printf\() s
+5 85 M
+(                        printf\() s
 /Courier-Bold 7 7 SUF
-118.4 61 M
+135.2 85 M
 ("2 ") s
 /F-gs-font 7 7 SF
-135.2 61 M
+152 85 M
 (\);) s
-5 53 M
-(                ) s
+5 77 M
+(                    ) s
 /Courier-Bold 7 7 SUF
-72.2 53 M
+89 77 M
 (else) s
 /F-gs-font 7 7 SF
-5 45 M
-(                    printf\() s
+5 69 M
+(                        printf\() s
 /Courier-Bold 7 7 SUF
-118.4 45 M
+135.2 69 M
 ("4 ") s
 /F-gs-font 7 7 SF
-135.2 45 M
+152 69 M
 (\);) s
-5 37 M
+5 61 M
+(                }) s
+5 53 M
+(                printf\() s
+/Courier-Bold 7 7 SUF
+101.6 53 M
+("]\\n") s
+/F-gs-font 7 7 SF
+122.6 53 M
+(\);) s
+5 45 M
 (            }) s
+5 37 M
+(            ) s
+/Courier-Oblique 7 7 SUF
+55.4 37 M
+(// Handle the last process.) s
+/F-gs-font 7 7 SF
 5 29 M
 (            printf\() s
 /Courier-Bold 7 7 SUF
 84.8 29 M
+("Process %d: [ ") s
+/F-gs-font 7 7 SF
+152 29 M
+(,p-1\);) s
+5 21 M
+(            ) s
+/Courier-Bold 7 7 SUF
+55.4 21 M
+(for) s
+/F-gs-font 7 7 SF
+68 21 M
+(\( ) s
+/Courier-Bold 7 7 SUF
+76.4 21 M
+(int) s
+/F-gs-font 7 7 SF
+89 21 M
+( t=0; t<local_n-1; t++ \)) s
+5 13 M
+(            {) s
+5 5 M
+(                ) s
+/Courier-Bold 7 7 SUF
+72.2 5 M
+(if) s
+/F-gs-font 7 7 SF
+80.6 5 M
+( \( t%2 == 0 \)) s
+402 501 M
+(                    printf\() s
+/Courier-Bold 7 7 SUF
+515.4 501 M
+("2 ") s
+/F-gs-font 7 7 SF
+532.2 501 M
+(\);) s
+402 493 M
+(                ) s
+/Courier-Bold 7 7 SUF
+469.2 493 M
+(else) s
+/F-gs-font 7 7 SF
+402 485 M
+(                    printf\() s
+/Courier-Bold 7 7 SUF
+515.4 485 M
+("4 ") s
+/F-gs-font 7 7 SF
+532.2 485 M
+(\);) s
+402 477 M
+(            }) s
+402 469 M
+(            printf\() s
+/Courier-Bold 7 7 SUF
+481.8 469 M
 ("1 ]\\n") s
 /F-gs-font 7 7 SF
-114.2 29 M
+511.2 469 M
 (\);) s
-5 21 M
+402 461 M
 (        }) s
-5 13 M
+402 453 M
 (        printf\() s
 /Courier-Bold 7 7 SUF
-68 13 M
+465 453 M
 ("With n = %d intervals, our estimate\\n") s
 /F-gs-font 7 7 SF
-231.8 13 M
+628.8 453 M
 (, n\);) s
-5 5 M
+402 445 M
 (        printf\() s
 /Courier-Bold 7 7 SUF
-68 5 M
+465 445 M
 ("of the integral from %f to %f = %f\\n") s
 /F-gs-font 7 7 SF
-227.6 5 M
+624.6 445 M
 (, a, b, total\);) s
-402 501 M
+402 437 M
 (    }) s
-402 485 M
+402 421 M
 (    ) s
 /Courier-Oblique 7 7 SUF
-418.8 485 M
+418.8 421 M
 (/* Shut down MPI */) s
 /F-gs-font 7 7 SF
-402 477 M
+402 413 M
 (    MPI_Finalize\(\);) s
-402 469 M
+402 405 M
 (}) s
 _R
 S

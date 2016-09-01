@@ -71,6 +71,14 @@ int main(int argc, char** argv)
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &p);
+    
+    // CHeck to make sure that more than process are running.
+    if ( p == 1 )
+    {
+        printf("Please Run with > 1 processes." );
+        return 1;
+    }
+
 
     // Parse the comand line arguments. I'm sure this can be done better,
     // especially in a parallel enviroment but, I'm tierd and want bed:)
