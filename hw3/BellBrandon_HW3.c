@@ -45,7 +45,8 @@ int MyPI_Bcast (
     // has the messsage to be sent.
 
     int rank = ( my_rank + ( p - root ) ) % p;
-    int mpirank = ( rank + ( p + root ) ) % p;
+    int mpirank;// = ( rank + ( p + root ) ) % p;
+    int mpic;
 
     // Set up the loop to determine send and recvs for each stage of the tree.
     // This is for low to high bit method.
@@ -56,25 +57,32 @@ int MyPI_Bcast (
         
         // Detremine wheither to send/recv or do nothing with it's companion.
         // First determine if p is to recv at this stage.
-        if ( ( rank > companion ) && ( companion >> ( 1 << stage ) ) == 0 )
+        if ( ( rank < companion ) && ( companion >> ( 1 << stage ) ) == 0 )
         {
-            int mpirank = ( companion + ( p + root ) ) % p;
-            MPI_Recv( message, count, MPI_FLOAT, my_rank, 1, comm, &status );
-            printf("Step %d rank %d Recvs from %d\n", stage, my_rank, companion);
+            mpic = ( companion + ( p + root ) ) % p;
+            mpirank = ( rank + ( p + root ) ) % p;
+            printf(" send mpirank %d mpic %d\n", mpirank, mpic );
+            MPI_Send( message, count, MPI_FLOAT, mpirank, 1, comm );
+            printf("Step %d rank %d Sends to %d\n", stage, rank, companion);
+        }
+        else if ( ( rank > companion ) && ( companion >> ( 1 << stage ) ) == 0 )
+        {
+            mpic = ( companion + ( p + root ) ) % p;
+            mpirank = ( rank + ( p + root ) ) % p;
+            printf(" recv mpirank %d mpic %d\n", mpirank, mpic );
+            MPI_Recv( message, count, MPI_FLOAT, mpirank, 1, comm, &status );
+            printf("Step %d rank %d Recvs from %d\n", stage, rank, companion);
         }
         // Or if p is suposed to send at this stage.
-        else if ( ( rank < companion ) && ( companion >> ( 1 << stage ) ) == 0 )
-        {
-            int mpirank = ( companion + ( p + root ) ) % p;
-            MPI_Send( message, count, MPI_FLOAT, my_rank, 1, comm );
-            printf("Step %d rank %d Sends to %d\n", stage, my_rank, companion);
-        }
         // Handle the case that P and it's companion are not to communicate
         // during this stage.
         else
-            int mpirank = ( companion + ( p + root ) ) % p;
+        {
+            mpirank = ( companion + ( p + root ) ) % p;
+            mpirank = ( rank + ( p + root ) ) % p;
             printf("Step %d rank %d does nothing\n", stage, mpirank);
             continue;
+        }
     }
     return message;
 }
@@ -144,6 +152,8 @@ int main ( int argc, char* argv[] )
         message = 5;
     else
         message = 0;
+
+    //printf("Message on rank %d is %f \n", my_rank, message );
 
     MyPI_Bcast ( &message, 1, MPI_FLOAT, 0, MPI_COMM_WORLD, 1 );
 
