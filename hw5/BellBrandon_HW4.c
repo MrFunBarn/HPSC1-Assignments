@@ -20,7 +20,8 @@ int main(int argc, char* argv[])
     double     tick;
     double     end;
     int        np     = 100;
-    char        message[0];
+    int        msize  = 1024;
+    char       message[msize];
     double     total;
     MPI_Status status;
 
@@ -34,20 +35,22 @@ int main(int argc, char* argv[])
     end = 0;
     if( p == 2 )
     {
+        // Ensure process are synced at this point.
+        MPI_Barrier(MPI_COMM_WORLD); 
+        // Have p0 start timing
         if( my_rank == 0 )
             start = MPI_Wtime();
         for( int i=0; i < np; i++ )
         {
-            MPI_Barrier(MPI_COMM_WORLD); 
             if( my_rank == 0 )
             {
-                MPI_Send( &message, 1, MPI_CHAR, 1, tag, MPI_COMM_WORLD );
-                MPI_Recv( &message, 1, MPI_CHAR 1, tag, MPI_COMM_WORLD, &status );
+                MPI_Send( &message, msize, MPI_CHAR, 1, tag, MPI_COMM_WORLD );
+                MPI_Recv( &message, msize, MPI_CHAR, 1, tag, MPI_COMM_WORLD, &status );
             }   
             else 
             {
-                MPI_Recv( &message, 1, MPI_CHAR, 0, tag, MPI_COMM_WORLD, &status );
-                MPI_Send( &message, 1, MPI_CHAR, 0, tag, MPI_COMM_WORLD );
+                MPI_Recv( &message, msize, MPI_CHAR, 0, tag, MPI_COMM_WORLD, &status );
+                MPI_Send( &message, msize, MPI_CHAR, 0, tag, MPI_COMM_WORLD );
             }
         }
         if( my_rank == 0 )
@@ -57,7 +60,7 @@ int main(int argc, char* argv[])
     {
     total = (end - start); 
     printf("%15.10f\n",total);
-    total = (end - start) / np; 
+    total = (end - start) / 2*np; 
     printf("The elapsed time was %15.10f\n", total );
     }
 
