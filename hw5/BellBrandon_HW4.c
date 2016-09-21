@@ -17,12 +17,11 @@ int main(int argc, char* argv[])
     int        p;
     int        tag    = 0;
     double     start;
-    double     tick;
     double     end;
-    int        np     = 10000;
+    int        np     = 1000;
     int        msize  = 0;
-    int        maxpower = 20;
-    int        maxsize = pow(2,maxpower)*4;
+    int        maxpower = 22;
+    int        maxsize = pow(2,maxpower);
     char       message[maxsize];
     double     total;
     char       name[MPI_MAX_PROCESSOR_NAME];
@@ -51,7 +50,8 @@ int main(int argc, char* argv[])
 
     // Loop through a series of pingpong passes with Wtime calls on either side
     // of the loop to get the time for np passes.
-    for ( int i=0; i <= maxpower; i++ )
+    int i;
+    for ( i=0; i <= maxpower; i++ )
     {
         msize = pow(2,i);
         // Ensure process are synced at this point because p0 handles the output.
@@ -59,7 +59,9 @@ int main(int argc, char* argv[])
         // Have p0 start timing
         if( my_rank == 0 )
             start = MPI_Wtime();
-        for( double j=0; j < np; j++ )
+        
+        int j;
+        for( j=0; j < np; j++ )
         {
             if( my_rank == 0 )
             {
@@ -76,7 +78,6 @@ int main(int argc, char* argv[])
         if( my_rank == 0 )
         {
             end = MPI_Wtime();
-            printf("i %d\n",i);
 
             // calculate average message time for np messages, then the 1/2 round
             // trip time.
@@ -85,7 +86,7 @@ int main(int argc, char* argv[])
             total = total / 2;
 
             // Output the timing to stdout.
-            printf("[ %s, %d ], %5.10f, %5.10f, %1.15f, %4d\n", name, my_rank, start, end, total, msize);
+            printf("[ %s, %d ], %5.10f, %5.10f, %1.15f, %7d\n", name, my_rank, start, end, total, msize);
         }
     }
 
