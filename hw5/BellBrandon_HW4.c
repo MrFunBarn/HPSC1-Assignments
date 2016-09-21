@@ -19,10 +19,10 @@ int main(int argc, char* argv[])
     double     start;
     double     tick;
     double     end;
-    int        np     = 1000;
+    int        np     = 10000;
     int        msize  = 0;
-    int        maxsize = 4096;
-    int        maxpower = 12;
+    int        maxpower = 20;
+    int        maxsize = pow(2,maxpower)*4;
     char       message[maxsize];
     double     total;
     char       name[MPI_MAX_PROCESSOR_NAME];
@@ -51,11 +51,9 @@ int main(int argc, char* argv[])
 
     // Loop through a series of pingpong passes with Wtime calls on either side
     // of the loop to get the time for np passes.
-    for ( double i=0; i < maxpower; i++ )
+    for ( int i=0; i <= maxpower; i++ )
     {
-        double x =2;
-        i = pow(2,i);
-        msize = i;
+        msize = pow(2,i);
         // Ensure process are synced at this point because p0 handles the output.
         MPI_Barrier(MPI_COMM_WORLD); 
         // Have p0 start timing
@@ -78,6 +76,7 @@ int main(int argc, char* argv[])
         if( my_rank == 0 )
         {
             end = MPI_Wtime();
+            printf("i %d\n",i);
 
             // calculate average message time for np messages, then the 1/2 round
             // trip time.
