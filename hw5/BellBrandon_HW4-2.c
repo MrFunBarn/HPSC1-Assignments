@@ -49,8 +49,10 @@ int main(int argc, char* argv[])
     printf("[ %s, %d ]\n", name, my_rank);
 
     // Loop through a series of pingpong passes with Wtime calls on either side
-    // of the loop to get the time for np passes.
-    for ( int i=0; i <= maxpower; i++ )
+    // of the loop to get the time for np passes. The Intel compiler doesn't
+    // like varibale defs in the the for loop.
+    int i;
+    for ( i=0; i <= maxpower; i++ )
     {
         msize = pow(2,i);
         // Ensure process are synced at this point because p0 handles the output.
@@ -58,7 +60,9 @@ int main(int argc, char* argv[])
         // Have p0 start timing
         if( my_rank == 0 )
             start = MPI_Wtime();
-        for( double j=0; j < np; j++ )
+        
+        int j;
+        for( j=0; j < np; j++ )
         {
             if( my_rank == 0 )
             {
