@@ -10,7 +10,6 @@
 #include <string.h>
 #include "mpi.h"
 
-
 int main(int argc, char* argv[])
 {
     int        my_rank;
@@ -63,7 +62,6 @@ int main(int argc, char* argv[])
     total = (end - start) / 2*np; 
     printf("The elapsed time was %15.10f\n", total );
     }
-
 
     //MPI_Send( &integral, 1, MPI_FLOAT, dest, tag, MPI_COMM_WORLD );
     //MPI_Recv( &total, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status );
