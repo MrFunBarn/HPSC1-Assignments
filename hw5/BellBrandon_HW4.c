@@ -19,9 +19,11 @@ int main(int argc, char* argv[])
     double     start;
     double     tick;
     double     end;
-    int        np     = 100000;
-    int        msize  = 100;
-    char       message[msize];
+    int        np     = 1000;
+    int        msize  = 0;
+    int        maxsize = 4096;
+    int        maxpower = 12;
+    char       message[maxsize];
     double     total;
     char       name[MPI_MAX_PROCESSOR_NAME];
     int        pnamemax;
@@ -38,47 +40,54 @@ int main(int argc, char* argv[])
     // more.
     if( p != 2 )
     {
-        printf("Please use exactly 2 processes");
+        fflush(stdout);
+        printf("[ %s, %d ], Please use exactly 2 processes\n", name, my_rank);
         return 1;
     }
-
-    // Loop through a series of pingpong passes with Wtime calls on either side
-    // of the loop to get the time for np passes.
-    end = 0;
 
     // Dump out each rank and the node that it's on.
     fflush(stdout);
     printf("[ %s, %d ]\n", name, my_rank);
 
-    // Ensure process are synced at this point.
-    MPI_Barrier(MPI_COMM_WORLD); 
-    // Have p0 start timing
-    if( my_rank == 0 )
-        start = MPI_Wtime();
-    for( int i=0; i < np; i++ )
+    // Loop through a series of pingpong passes with Wtime calls on either side
+    // of the loop to get the time for np passes.
+    for ( double i=0; i < maxpower; i++ )
     {
+        double x =2;
+        i = pow(2,i);
+        msize = i;
+        // Ensure process are synced at this point because p0 handles the output.
+        MPI_Barrier(MPI_COMM_WORLD); 
+        // Have p0 start timing
+        if( my_rank == 0 )
+            start = MPI_Wtime();
+        for( double j=0; j < np; j++ )
+        {
+            if( my_rank == 0 )
+            {
+                MPI_Send( &message, msize, MPI_CHAR, 1, tag, MPI_COMM_WORLD );
+                MPI_Recv( &message, msize, MPI_CHAR, 1, tag, MPI_COMM_WORLD, &status );
+            }   
+            else 
+            {
+                MPI_Recv( &message, msize, MPI_CHAR, 0, tag, MPI_COMM_WORLD, &status );
+                MPI_Send( &message, msize, MPI_CHAR, 0, tag, MPI_COMM_WORLD );
+            }
+        }
+        // p0 ends timeing, does calculations and dumps output for the np runs.
         if( my_rank == 0 )
         {
-            MPI_Send( &message, msize, MPI_CHAR, 1, tag, MPI_COMM_WORLD );
-            MPI_Recv( &message, msize, MPI_CHAR, 1, tag, MPI_COMM_WORLD, &status );
-        }   
-        else 
-        {
-            MPI_Recv( &message, msize, MPI_CHAR, 0, tag, MPI_COMM_WORLD, &status );
-            MPI_Send( &message, msize, MPI_CHAR, 0, tag, MPI_COMM_WORLD );
+            end = MPI_Wtime();
+
+            // calculate average message time for np messages, then the 1/2 round
+            // trip time.
+            total = (end - start); 
+            total = total / np;
+            total = total / 2;
+
+            // Output the timing to stdout.
+            printf("[ %s, %d ], %5.10f, %5.10f, %1.15f, %4d\n", name, my_rank, start, end, total, msize);
         }
-    }
-    if( my_rank == 0 )
-    {
-        end = MPI_Wtime();
-        // calculate average message time for np messages, then the 1/2 round
-        // trip time.
-        total = (end - start); 
-        total = total / np;
-        total = total / 2;
-        // Output the timing [ name , rank ], start, end, single size, message
-        // size.
-        printf("[ %s, %d ], %5.10f, %5.10f, %1.15f, %4d\n", name, my_rank, start, end, total, msize);
     }
 
     // Close up.
