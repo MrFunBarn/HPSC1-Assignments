@@ -1,4 +1,3 @@
-Argument "0,23" isn't numeric in sprintf at /opt/sdsc/bin/ibrun line 470, <NODEFILE> line 2.
 [ comet-10-51.sdsc.edu, 1 ]
 [ comet-10-51.sdsc.edu, 0 ]
 [ comet-10-51.sdsc.edu, 0 ], 1474473610.2569489479, 1474473610.2575340271, 0.000000292539597,       1
