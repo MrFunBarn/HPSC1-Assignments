@@ -64,6 +64,23 @@
 /* } */
 
 
+/* Paralell matrix code from p.83. */
+void allgather_matrix_matrix_prod(
+                                 double             **local_A,
+                                 int                n,
+                                 double             **local_x,
+                                 double             **global_x,
+                                 double             **local_y,
+                                 int                local_n )
+{
+    int i;
+    int j;
+
+    MPI_Allgather( local_x, local_n, MPI_FLOAT, global_x, local_n, MPI_FLOAT, MPI_COMM_WORLD );
+
+    for ( i=0; i<local_n; i++ )
+        local_y[i][j] = local_y[i][j] + local_A[i][j]*global_x[j][j];
+}
 
 // Function to print the matrix
 void print_matrix( double **matrix, int dim )
@@ -85,21 +102,30 @@ void print_matrix( double **matrix, int dim )
 
 int main( int argc, char* argv[] )
 {
-    int     n   =   0;   // Matrix order.
-    int i,j,a;           // Loop Variables.
-
-    double **M;
-    double *Mb;
-
-    int         my_rank;   /* My process rank           */
-    int         p;         /* The number of processes   */
-    int         tag = 0;
+    int         n       =   0;  // Matrix order.
+    int         local_n =   0;  // Local Matrix order.
+    int         local_m =   0;  // Local Matrix order.
+    int         i,j,a;          // Loop Variables.
+    double      **M;            // Global Matrix row pointers
+    double      *Mb;            // Global Matrix Data
+    double      **m;            // Local Matrix row pointers
+    double      *mb;            // Local Matrix Data
+    double      **a;            // Local Matrix row pointers
+    double      *ab;            // Local Matrix Data
+    int         my_rank;        // My process rank           
+    int         p;              // The number of processes   
+    int         tag     = 0;    // MPI Tag for
     MPI_Status  status;
+    // Node name variables.
+    char       name[MPI_MAX_PROCESSOR_NAME];
+    int        pnamemax;
 
     // Initialize MPI and retreive world size and p's rank.
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &p);
+    // Get the node name for output.
+    MPI_Get_processor_name(name,&pnamemax);
 
     // Parse the comand line argument for order of matricie. 
     if ( argc > 1 )
@@ -115,7 +141,7 @@ int main( int argc, char* argv[] )
                 {
                     if (my_rank == 0)
                     {
-                        printf("==> Invalid arguments\n");
+                        printf("==> [ %s, %d ], Invalid arguments\n", name, my_rank);
                         return 1;
                     }
                 }
@@ -123,38 +149,80 @@ int main( int argc, char* argv[] )
         }
     }
 
-    // Build a Dynamicaly allocated contiguous 2d square matrix of size n.
-    // array of row pointers.
-    M = (double **) malloc( n * sizeof(double *) );
-    // where data is stored.
-    Mb = (double *) malloc( n * n * sizeof(double) );
-    // Initialize row pointers. 
-    for ( i=0; i<n; i++ )
+    // Determine the order of the local matrix for each p.
+    // Check that p fits perfectly into n.
+    if ( p == 1 )
+        local_n = n;
+        local_m = n;
+    else if ( n%p == 0 )
+        local_n = n / p;
+        local_m = n;
+    else
     {
-        M[i] = Mb + i * n;
+        printf("[ %s, %d ] p and n incompatible: p %d, n %d, local_n %d \n",name, my_rank, p, n, local_n);
+        return 2;
     }
-    // Initialize the array data to zero or 1 (identity Matrix).
-    for ( i=0; i<n; i++ )
+
+    // Only build the global array on p0.
+    if ( my_rank == 0)
     {
-        for ( j=0; j<n; j++ )
+        // Build the global array.
+        // Build a Dynamicaly allocated contiguous 2d square matrix of size n.
+        // array of row pointers.
+        M = (double **) malloc( n * sizeof(double *) );
+        // where data is stored.
+        Mb = (double *) malloc( n * n * sizeof(double) );
+        // Initialize row pointers. 
+        for ( i=0; i<n; i++ )
         {
-            M[i][j] = 0.0;
-            // Make the matrix the identiy matrix, it's just easy.
-            if ( i == j )
-                M[i][j] = 1;
+            M[i] = Mb + i * n;
         }
+        // Initialize the array data to zero or 1 (identity Matrix).
+        for ( i=0; i<n; i++ )
+        {
+            for ( j=0; j<n; j++ )
+            {
+                M[i][j] = 0.0;
+                // Make the matrix the identiy matrix, it's just easy.
+                if ( i == j )
+                    M[i][j] = 1;
+            }
+        }
+        // TO-DO: Delete this.
+        print_matrix( M, n);
     }
     
-    // Determine the order of the local matrix for each p.
-    // assume for now that the p fit perfectly into n.
+    // Build the local array.
+    // Build a Dynamicaly allocated contiguous 2d square matrix of size local_n.
+    // array of row pointers.
+    m = (double **) malloc( local_n * sizeof(double *) );
+    // where data is stored.
+    mb = (double *) malloc( local_n * local_m * sizeof(double) );
+    // Initialize row pointers. 
+    for ( i=0; i<local_n; i++ )
+    {
+        m[i] = mb + i * local_n;
+    }
+    // Initialize the array data to zero.
+    for ( i=0; i<local_n; i++ )
+    {
+        for ( j=0; j<local_n; j++ )
+        {
+            m[i][j] = 0.0;
+        }
+    }
 
+    /* allgather_matrix_matrix_prod( m, n,  */
 
-
-    print_matrix( M, n);
+    // TO-DO: delete these. 
+    printf("[ %s, %d ] p %d, n %d, local_n %d \n", name, my_rank, p, n, local_n);
+    print_matrix( m, local_n);
 
     // Free the matrix memory.
-    free(M);
-    free(Mb);
+    /* free(M); */
+    /* free(Mb); */
+    /* free(m); */
+    /* free(mb); */
 
     /* Shut down MPI */
     MPI_Finalize();
