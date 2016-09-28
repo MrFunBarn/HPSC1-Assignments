@@ -65,7 +65,7 @@
 
 
 
-
+// Function to print the matrix
 void print_matrix( double **matrix, int dim )
 {
     int i;
@@ -83,53 +83,79 @@ void print_matrix( double **matrix, int dim )
 }
 
 
-void pop_matrix( double **matrix, int dim )
-{
-    int i;
-    int j;
-    for ( i=0; i< dim; i++ )
-    {
-        for ( j=0; j<dim; j++ )
-        {   
-            if ( i <= j )
-                matrix[i][j] = 1;
-        }   
-    }
-}
-
-
 int main( int argc, char* argv[] )
 {
-    int     n   =   8;
-    int i,j;
+    int     n   =   0;   // Matrix order.
+    int i,j,a;           // Loop Variables.
+
     double **M;
     double *Mb;
+
+    int         my_rank;   /* My process rank           */
+    int         p;         /* The number of processes   */
+    int         tag = 0;
+    MPI_Status  status;
+
+    // Initialize MPI and retreive world size and p's rank.
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &p);
+
+    // Parse the comand line argument for order of matricie. 
+    if ( argc > 1 )
+    {
+        // Loop though all the arguments if more than on is present.
+        for ( a=1; a<argc; a++ )
+        {
+            // checks for -i and a convertable int value.
+            if ( !strcmp(argv[a],"-n") && (argc-1) > a && strtol( argv[a+1], NULL, 10 ) )
+            {
+                n = strtol( argv[2], NULL, 10 );
+                if ( n == 0)
+                {
+                    if (my_rank == 0)
+                    {
+                        printf("==> Invalid arguments\n");
+                        return 1;
+                    }
+                }
+            }
+        }
+    }
 
     // Build a Dynamicaly allocated contiguous 2d square matrix of size n.
     // array of row pointers.
     M = (double **) malloc( n * sizeof(double *) );
     // where data is stored.
     Mb = (double *) malloc( n * n * sizeof(double) );
-
     // Initialize row pointers. 
     for ( i=0; i<n; i++ )
     {
         M[i] = Mb + i * n;
     }
-
+    // Initialize the array data to zero or 1 (identity Matrix).
     for ( i=0; i<n; i++ )
     {
         for ( j=0; j<n; j++ )
+        {
             M[i][j] = 0.0;
+            // Make the matrix the identiy matrix, it's just easy.
+            if ( i == j )
+                M[i][j] = 1;
+        }
     }
-    /* float       m576[576][576]; */
-    /* float       m144[144][144]; */
-    /* float       m1152[1152][1152]; */
-    /* float       m2304[2304][2304]; */
+    
+    // Determine the order of the local matrix for each p.
+    // assume for now that the p fit perfectly into n.
 
-    pop_matrix( M, n);
+
+
     print_matrix( M, n);
 
+    // Free the matrix memory.
     free(M);
     free(Mb);
+
+    /* Shut down MPI */
+    MPI_Finalize();
 }
