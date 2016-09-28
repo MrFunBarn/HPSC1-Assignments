@@ -11,7 +11,6 @@
 // 1) Needed for Assignment. Make p.83 code into a matrix-matrix pruduct via n
 // allgathers on on the columns and doing the dots.
 //
-// -- Build matricies.
 //
 // 2) Implement Fox's for square matricies. Can get matricies however.
 
@@ -19,7 +18,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "mpi.h"
+#include <mpi.h>
+#include <popt.h>
 
 /* Paralell matrix code from p.83. */
 /* void Paralled_matrix_matrix_prod( */
@@ -63,6 +63,9 @@
     /* } */
 /* } */
 
+
+
+
 void print_matrix( double **matrix, int dim )
 {
     int i;
@@ -97,12 +100,12 @@ void pop_matrix( double **matrix, int dim )
 
 int main( int argc, char* argv[] )
 {
-    // Build a Dynamicaly allocated contiguous 2d square matrix of size n.
     int     n   =   8;
     int i,j;
     double **M;
     double *Mb;
 
+    // Build a Dynamicaly allocated contiguous 2d square matrix of size n.
     // array of row pointers.
     M = (double **) malloc( n * sizeof(double *) );
     // where data is stored.
@@ -127,4 +130,6 @@ int main( int argc, char* argv[] )
     pop_matrix( M, n);
     print_matrix( M, n);
 
+    free(M);
+    free(Mb);
 }
