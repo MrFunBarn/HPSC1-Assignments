@@ -83,14 +83,14 @@ void allgather_matrix_matrix_prod(
 }
 
 // Function to print the matrix
-void print_matrix( double **matrix, int dim )
+void print_matrix( double **matrix, int n, int m )
 {
     int i;
     int j;
-    for ( i=0; i<dim; i++ )
+    for ( i=0; i<n; i++ )
     {
     printf( "|");
-        for ( j=0; j<dim; j++ )
+        for ( j=0; j<m; j++ )
         {   
             printf("%2.0f", (matrix[i][j] ));
         }   
@@ -110,8 +110,8 @@ int main( int argc, char* argv[] )
     double      *Mb;            // Global Matrix Data
     double      **m;            // Local Matrix row pointers
     double      *mb;            // Local Matrix Data
-    double      **a;            // Local Matrix row pointers
-    double      *ab;            // Local Matrix Data
+    double      **A;            // Local Matrix row pointers
+    double      *Ab;            // Local Matrix Data
     int         my_rank;        // My process rank           
     int         p;              // The number of processes   
     int         tag     = 0;    // MPI Tag for
@@ -127,7 +127,9 @@ int main( int argc, char* argv[] )
     // Get the node name for output.
     MPI_Get_processor_name(name,&pnamemax);
 
+    ///////////////////////////////////////////////////////////////////////////
     // Parse the comand line argument for order of matricie. 
+    ///////////////////////////////////////////////////////////////////////////
     if ( argc > 1 )
     {
         // Loop though all the arguments if more than on is present.
@@ -149,21 +151,30 @@ int main( int argc, char* argv[] )
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////
     // Determine the order of the local matrix for each p.
     // Check that p fits perfectly into n.
+    ///////////////////////////////////////////////////////////////////////////
     if ( p == 1 )
+    {
         local_n = n;
         local_m = n;
+    }
+    // Splits the sizes up into n rows and m colums.
     else if ( n%p == 0 )
+    {   
         local_n = n / p;
         local_m = n;
+    }
     else
     {
         printf("[ %s, %d ] p and n incompatible: p %d, n %d, local_n %d \n",name, my_rank, p, n, local_n);
         return 2;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
     // Only build the global array on p0.
+    ///////////////////////////////////////////////////////////////////////////
     if ( my_rank == 0)
     {
         // Build the global array.
@@ -182,41 +193,77 @@ int main( int argc, char* argv[] )
         {
             for ( j=0; j<n; j++ )
             {
-                M[i][j] = 0.0;
+                M[i][j] = 0;
                 // Make the matrix the identiy matrix, it's just easy.
-                if ( i == j )
+                if ( i <= j )
                     M[i][j] = 1;
             }
         }
         // TO-DO: Delete this.
-        print_matrix( M, n);
-    }
-    
-    // Build the local array.
-    // Build a Dynamicaly allocated contiguous 2d square matrix of size local_n.
-    // array of row pointers.
-    m = (double **) malloc( local_n * sizeof(double *) );
-    // where data is stored.
-    mb = (double *) malloc( local_n * local_m * sizeof(double) );
-    // Initialize row pointers. 
-    for ( i=0; i<local_n; i++ )
-    {
-        m[i] = mb + i * local_n;
-    }
-    // Initialize the array data to zero.
-    for ( i=0; i<local_n; i++ )
-    {
-        for ( j=0; j<local_n; j++ )
+        print_matrix( M, n, n);
+        ///////////////////////////////////////////////////////////////////////
+        // Ship off strips of the arrray to thier respective proceses if p>1.
+        ///////////////////////////////////////////////////////////////////////
+        if ( p > 1 && my_rank == 0)
         {
-            m[i][j] = 0.0;
+            int k;
+            int dest = 0;
+            int index =0;
+            for( k=0; k<p; k++ )
+            {
+                /* printf("Send[ %s, %d ] p %d, n %d, local_n %d \n", name, my_rank, p, n, local_n); */
+                /* printf("here %d %d \n", k, index); */
+                /* print_matrix( M, n, 1 ); */
+                MPI_Send( &M[1][1], local_n * local_m, MPI_DOUBLE, dest, tag, MPI_COMM_WORLD );
+                index += local_n;
+                dest++;
+                /* printf("Send[ %s, %d ] p %d, n %d, local_n %d \n", name, my_rank, p, n, local_n); */
+            }
         }
     }
+    
+    ///////////////////////////////////////////////////////////////////////////
+    // Build the local arrays m and A to multiplied together.
+    // Build a Dynamicaly allocated contiguous 2d square matrix of size local_n
+    // by local_m.
+    ///////////////////////////////////////////////////////////////////////////
+    if ( p > 1 )
+    {
+        // array of row pointers.
+        m = (double **) malloc( local_n * sizeof(double *) );
+        A = (double **) malloc( local_n * sizeof(double *) );
+        // where data is stored.
+        mb = (double *) malloc( local_n * local_m * sizeof(double) );
+        Ab = (double *) malloc( local_n * local_m * sizeof(double) );
+        // Initialize row pointers. 
+        for ( i=0; i<local_n; i++ )
+        {
+            m[i] = mb + i * local_n;
+            A[i] = Ab + i * local_n;
+        }
+        // Initialize the array data to zero.
+        for ( i=0; i<local_n; i++ )
+        {
+            for ( j=0; j<local_m; j++ )
+            {
+                m[i][j] = 0.0;
+                A[i][j] = 0.0;
+            }
+        }
+        printf("size %d\n", sizeof(mb));
+        MPI_Recv( mb, local_n * local_m, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status );
+        printf(" Recv[ %s, %d ] p %d, n %d, local_m %d \n", name, my_rank, p, n, local_m);
+        print_matrix( m, local_n, local_m);
+    }
+    else
+    {
+        m = M;
+        mb = Mb;
+    }
 
-    /* allgather_matrix_matrix_prod( m, n,  */
+    /* allgather_matrix_matrix_prod( local_m, local_n,  */
 
     // TO-DO: delete these. 
-    printf("[ %s, %d ] p %d, n %d, local_n %d \n", name, my_rank, p, n, local_n);
-    print_matrix( m, local_n);
 
     // Free the matrix memory.
     /* free(M); */
